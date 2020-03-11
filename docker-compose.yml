@@ -5,8 +5,9 @@ services:
     build: .
     command: >
       sh -c "
-        ./manage.py runserver 0.0.0.0:8000"
+        cd project_uno_be &&
+        ./manage.py runserver 0.0.0.0:8001"
     volumes:
       - .:/code
     ports:
-      - 8000:8000
+      - 8001:8001
