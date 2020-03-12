@@ -6,6 +6,9 @@ services:
     command: >
       sh -c "
         cd project_uno_be &&
+        pylint ./**/* &&
+        coverage run --source='.' manage.py test &&
+        coverage report &&
         ./manage.py runserver 0.0.0.0:8001"
     volumes:
       - .:/code

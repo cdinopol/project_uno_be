@@ -30,7 +30,7 @@ DEBUG = int(os.getenv('DEBUG') or 1)
 
 ALLOWED_HOSTS = [
     'localhost',
-    os.getenv('STAGING_HOST'),
+    os.getenv('STAGING_HOST', ''),
 ]
 
 
@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'accounts',
+    'server_jwt',
+    'game',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'project_uno_be.middleware.server.ServerSelectMiddleware',
 ]
 
 ROOT_URLCONF = 'project_uno_be.urls'
