@@ -1,0 +1,26 @@
+[Master]
+
+ignore=
+	manage.py,
+	asgi.py,
+
+load-plugins=pylint_django
+
+# Disable file/function comment requirement
+disable=C0112,C0114,C0115,C0116,W0611,
+# Disable if/elif return restriction - forcing bad practice
+	R1705,
+# Disable if/else without else restirction - most functions are handled by the framwork - forcing bad practice 
+	R1710,
+# Pylint cannot find modules from sub apps - disabling no name on module errors til this pylint issue resolved
+	E0611, E0401,
+# model function override -arguments-differ warning (https://github.com/PyCQA/pylint-django/issues/94)
+	W0221
+
+# Design checkers (http://pylint.pycqa.org/en/latest/technical_reference/features.html#design-checker)
+max-parents=12
+min-public-methods=1
+max-returns:10
+
+# Good variable names which should always be accepted, separated by a comma
+good-names=i,j,k,ex,Run,_,pk,x,y

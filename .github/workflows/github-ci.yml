@@ -1,0 +1,47 @@
+name: build
+
+on: push
+
+jobs:
+  build:
+    
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:11.2
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install Dependencies
+      run: |
+        apt-get update -qq && apt-get -y install binutils libproj-dev gdal-bin
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install codecov
+    - name: Lint n Test
+      env:
+        SECRET_KEY: SECRET_KEY
+        DB_NAME: postgres
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_HOST: postgres
+        DB_PORT: 5432
+      run: |
+        cd project_uno_be
+        pylint ./**/*
+        coverage run --source='.' manage.py test
+        coverage report
+        codecov -t ${{ secrets.CODECOV_TOKEN }}
