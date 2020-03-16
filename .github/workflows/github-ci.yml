@@ -1,6 +1,15 @@
 name: build
 
-on: push
+on: 
+  push:
+    paths:
+      - 'project_uno_be/**'
+      - '.github/**'
+      - 'requirements.txt'
+  pull_request:
+    branches:
+      - master
+      - dev
 
 jobs:
   build:
@@ -16,21 +25,31 @@ jobs:
           POSTGRES_DB: postgres
         ports:
         - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
+
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
     - name: Install Dependencies
       run: |
         apt-get update -qq && apt-get -y install binutils libproj-dev gdal-bin
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install codecov
+      if: steps.cache.outputs.cache-hit != 'true'
+
     - name: Lint n Test
       env:
         SECRET_KEY: SECRET_KEY
